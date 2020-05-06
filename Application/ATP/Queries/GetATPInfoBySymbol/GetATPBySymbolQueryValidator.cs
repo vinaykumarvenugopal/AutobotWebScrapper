@@ -12,11 +12,17 @@ namespace AutobotWebScrapper.Application.ATP.Queries.GetATPInfoBySymbol
 
             RuleFor(p => p.SymbolName).NotEmpty().WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.PreviousContractFromDate).NotNull().WithMessage("{PropertyName} is required.");
-            RuleFor(p => p.PreviousContractToDate).NotNull().WithMessage("{PropertyName} is required.");
-            RuleFor(p => p.PreviousContractExpiryDate).NotNull().WithMessage("{PropertyName} is required.");
-            RuleFor(p => p.FirstDayOfNewContract).NotNull().WithMessage("{PropertyName} is required.");
-            RuleFor(p => p.NewContractExpiryDate).NotNull().WithMessage("{PropertyName} is required.");
+            RuleFor(p => p.PreviousContractFromDate).Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull().NotEqual(DateTime.MinValue).WithMessage("{PropertyName} is required.");
+            RuleFor(p => p.PreviousContractToDate).Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull().NotEqual(DateTime.MinValue).WithMessage("{PropertyName} is required.");
+            RuleFor(p => p.PreviousContractExpiryDate).Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull().NotEqual(DateTime.MinValue).WithMessage("{PropertyName} is required.");
+            RuleFor(p => p.FirstDayOfNewContract).Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull().NotEqual(DateTime.MinValue).WithMessage("{PropertyName} is required.");
+            RuleFor(p => p.NewContractExpiryDate).Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull().NotEqual(DateTime.MinValue).WithMessage("{PropertyName} is required.");
+
             RuleFor(m => new
             {
                 m.PreviousContractFromDate,
