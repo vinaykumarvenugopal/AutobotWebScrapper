@@ -3,7 +3,7 @@ using AutobotWebScrapper.Application.Interfaces.Infrastructure;
 using AutobotWebScrapper.Application.Models.Infrastructure;
 using AutobotWebScrapper.Common.Extensions;
 using AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models;
-using Marvin.StreamExtensions;
+
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 
 namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
@@ -57,9 +58,9 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
                     };
                 }
 
-                GetHistoricalFuturesByDateDto returnType
-                    = stream.ReadAndDeserializeFromJson<GetHistoricalFuturesByDateDto>();
-
+                GetHistoricalFuturesByDateDto returnType = 
+                    await JsonSerializer.DeserializeAsync<GetHistoricalFuturesByDateDto>(stream);
+                
                 if (returnType.data.Count() == 0) throw new NoRecordsFoundException("No records returned from the service.");
 
                 return new HistoricalFuturesResponse
@@ -116,14 +117,18 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
                 }
 
                 FutureInstrumentDTO returnType;
+                string returnedText = string.Empty;
                 try
                 {
-                    returnType = stream.ReadAndDeserializeFromJson<FutureInstrumentDTO>();
+                    
+                    returnType = await JsonSerializer.DeserializeAsync<FutureInstrumentDTO>(stream);
+                   
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    
                     throw new NoRecordsFoundException($"No information returned from the service " +
-                        $"for the symbol {symbolName}");
+                        $"for the symbol {symbolName}. Exception occurred {e.Message}");
                 }
 
                 return new FutureInstrumentResponse

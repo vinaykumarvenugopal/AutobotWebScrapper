@@ -51,7 +51,7 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models
         public float openPrice { get; set; }
         public float highPrice { get; set; }
         public float lowPrice { get; set; }
-        public int closePrice { get; set; }
+        public float closePrice { get; set; }
         public float prevClose { get; set; }
         public float lastPrice { get; set; }
         public float change { get; set; }
@@ -97,7 +97,7 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models
         public float value { get; set; }
         public float vmap { get; set; }
         public float premiumTurnover { get; set; }
-        public int openInterest { get; set; }
+        public float openInterest { get; set; }
         public int changeinOpenInterest { get; set; }
         public float pchangeinOpenInterest { get; set; }
         public int marketLot { get; set; }
