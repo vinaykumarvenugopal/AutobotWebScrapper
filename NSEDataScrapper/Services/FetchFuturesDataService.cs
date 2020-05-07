@@ -87,6 +87,73 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
             return response.Data.FirstOrDefault().Close;
         }
 
+        public async Task<FutureInstrumentResponse> GetCurrentDayFutureInstrumentDataAsync(string symbolName)
+        {
+            var httpClient = _httpClientFactory.CreateClient("NSEClient");
+
+            string url = $"api/quote-derivative?symbol={symbolName}";
+
+            var request = new HttpRequestMessage(
+                   HttpMethod.Get,
+                   url);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(TYPE));
+            request.Headers.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36");
+            request.Headers.Add("Accept-Language", "en-GB,en-US;q=0.8,en;q=0.6");
+
+            using (var response = await httpClient.SendAsync(request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    _cancellationTokenSource.Token))
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode == false)
+                {
+                    throw new APICallException
+                    {
+                        StatusCode = (int)response.StatusCode,
+                        Content = await stream.StreamToStringAsync()
+                    };
+                }
+
+                FutureInstrumentDTO returnType;
+                try
+                {
+                    returnType = stream.ReadAndDeserializeFromJson<FutureInstrumentDTO>();
+                }
+                catch (Exception)
+                {
+                    throw new NoRecordsFoundException($"No information returned from the service " +
+                        $"for the symbol {symbolName}");
+                }
+
+                return new FutureInstrumentResponse
+                {
+                    Details = returnType.stocks.Select(d => new InstrumentDetail
+                    {
+                        InstrumentType = d.metadata.instrumentType,
+                        ExpiryDate = StringToDate(d.metadata.expiryDate),
+                        Open = (double)new Decimal(d.metadata.openPrice),
+                        High = (double)new Decimal(d.metadata.highPrice),
+                        Low= (double)new Decimal(d.metadata.lowPrice),
+                        Close = (double)new Decimal(d.metadata.closePrice),
+                        PreviousClose = (double)new Decimal(d.metadata.prevClose),
+                        LastTradedPrice  = (double)new Decimal(d.metadata.lastPrice),
+                        PercentOIChange = (double)new Decimal(d.marketDeptOrderBook.tradeInfo.pchangeinOpenInterest),
+                        PercentPriceChange = (double)new Decimal(d.metadata.pChange),
+                        NoOfContractsTraded = d.metadata.numberOfContractsTraded,
+                        LotSize = d.marketDeptOrderBook.tradeInfo.marketLot,
+                        VWAP = (double)new Decimal(d.marketDeptOrderBook.tradeInfo.vmap),
+                        AnnualisedVolatility = (double)new Decimal(d.marketDeptOrderBook.otherInfo.annualisedVolatility),
+                        DailyVolatility = (double)new Decimal(d.marketDeptOrderBook.otherInfo.dailyvolatility)
+                    }),
+                    SymbolName = returnType.info.symbol,
+                    IsFNOSecurity = returnType.info.isFNOSec
+                };
+
+            }
+
+        }
+
         private string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy");
         private string FormatDate2(DateTime date) => date.ToString("dd-MMM-yyyy").ToUpper();
         private string GetInstrumentType(string symbolName)
@@ -102,5 +169,7 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
                             .Append($"expiryDate={FormatDate2(expiryDate)}&")
                             .Append($"instrumentType={GetInstrumentType(symbolName)}&")
                             .Append($"symbol={symbolName}").ToString();
+
+       
     }
 }

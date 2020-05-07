@@ -12,6 +12,8 @@ namespace AutobotWebScrapper.Application.Interfaces.Infrastructure
                     DateTime endDate, DateTime expiryDate);
 
         public Task<double> GetFuturesDayCloseByDateAsync(string symbolName, DateTime date, DateTime expiryDate);
+
+        public Task<FutureInstrumentResponse> GetCurrentDayFutureInstrumentDataAsync(string symbolName);
     }
 }
 

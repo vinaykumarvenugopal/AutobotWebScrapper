@@ -77,7 +77,7 @@ namespace Infrastructure.IntegrationTests
             var sut = new FetchFuturesDataService(fixture.HTTPClientFactory);
 
             //Act
-            Func<Task<HistoricalFuturesResponse>> func = async () => 
+            Func<Task<HistoricalFuturesResponse>> func = async () =>
                 await sut.GetHistoricalFuturesByDateAsync("INFY", new DateTime(2020, 3, 7),
                                 new DateTime(2020, 3, 7), new DateTime(2020, 3, 26));
 
@@ -122,7 +122,7 @@ namespace Infrastructure.IntegrationTests
             //Arrange
             var sut = new FetchFuturesDataService(fixture.HTTPClientFactory);
 
-   
+
 
             //Act
             Func<Task<double>> func = async () =>
@@ -131,6 +131,38 @@ namespace Infrastructure.IntegrationTests
 
             //Assert
             await func.Should().ThrowAsync<NoRecordsFoundException>();
+
+
+        }
+
+        [Fact]
+        public async Task GetSuccessfullyGetCurrentDayFutureInstrumentData()
+        {
+            //Arrange
+            var sut = new FetchFuturesDataService(fixture.HTTPClientFactory);
+
+            //Act
+            var response = await sut.GetCurrentDayFutureInstrumentDataAsync("INFY");
+
+            //Assert
+            response.Details.Should().NotBeEmpty("There should be collection of stock information");
+
+            response.SymbolName.Should().Be("INFY", "we are requesting data for INFY future instrument");
+        }
+
+        [Fact]
+        public async Task ExceptionWhenInvalidSymbolNamePassedCallingGetCurrentDayFutureInstrumentData()
+        {
+            //Arrange
+            var sut = new FetchFuturesDataService(fixture.HTTPClientFactory);
+
+            //Act
+            Func<Task<FutureInstrumentResponse>> func = async () =>
+                await sut.GetCurrentDayFutureInstrumentDataAsync("VINAY");
+
+            //Assert
+            await func.Should().ThrowAsync<NoRecordsFoundException>();
+
 
 
         }
