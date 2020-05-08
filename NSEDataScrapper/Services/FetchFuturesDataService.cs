@@ -33,6 +33,8 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
         {
             var httpClient = _httpClientFactory.CreateClient("NSEClient");
 
+            symbolName = Uri.EscapeDataString(symbolName);
+
             string url = UrlBuilder(symbolName, startDate, endDate, expiryDate);
 
             var request = new HttpRequestMessage(
@@ -98,6 +100,8 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
 
         public async Task<FutureInstrumentResponse> GetCurrentDayFutureInstrumentDataAsync(string symbolName)
         {
+            symbolName = Uri.EscapeDataString(symbolName);
+
             var httpClient = _httpClientFactory.CreateClient("NSEClient");
 
             string url = $"api/quote-derivative?symbol={symbolName}";
