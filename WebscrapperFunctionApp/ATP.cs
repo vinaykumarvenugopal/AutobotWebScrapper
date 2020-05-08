@@ -66,7 +66,7 @@ namespace WebscrapperFunctionApp
             }
             catch (Exception e)
             {
-                log.LogError(e, "Some internal/unknown error occurred!");
+                log.LogError(e, $"Some internal/unknown error occurred! {e.Message}");
                 return new InternalServerErrorResult();
             }
           

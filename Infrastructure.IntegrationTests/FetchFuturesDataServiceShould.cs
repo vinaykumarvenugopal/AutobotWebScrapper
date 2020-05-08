@@ -161,7 +161,7 @@ namespace Infrastructure.IntegrationTests
                 await sut.GetCurrentDayFutureInstrumentDataAsync("VINAY");
 
             //Assert
-            await func.Should().ThrowAsync<NoRecordsFoundException>();
+            await func.Should().ThrowAsync<DeserializeException>();
 
 
 

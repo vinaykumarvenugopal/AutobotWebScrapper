@@ -57,9 +57,17 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
                         Content = await stream.StreamToStringAsync()
                     };
                 }
-
-                GetHistoricalFuturesByDateDto returnType = 
-                    await JsonSerializer.DeserializeAsync<GetHistoricalFuturesByDateDto>(stream);
+                GetHistoricalFuturesByDateDto returnType;
+                try
+                {
+                    returnType =
+                        await JsonSerializer.DeserializeAsync<GetHistoricalFuturesByDateDto>(stream);
+                }
+                catch (Exception e)
+                {
+                    throw new DeserializeException($"Exception occurred while deserializing " +
+                        $"returned stream to FutureInstrumentDTO object. {e.Message}");
+                }
                 
                 if (returnType.data.Count() == 0) throw new NoRecordsFoundException("No records returned from the service.");
 
@@ -120,15 +128,12 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Services
                 string returnedText = string.Empty;
                 try
                 {
-                    
                     returnType = await JsonSerializer.DeserializeAsync<FutureInstrumentDTO>(stream);
-                   
                 }
                 catch (Exception e)
                 {
-                    
-                    throw new NoRecordsFoundException($"No information returned from the service " +
-                        $"for the symbol {symbolName}. Exception occurred {e.Message}");
+                    throw new DeserializeException($"Exception occurred while deserializing " +
+                        $"returned stream to FutureInstrumentDTO object. {e.Message}");
                 }
 
                 return new FutureInstrumentResponse
