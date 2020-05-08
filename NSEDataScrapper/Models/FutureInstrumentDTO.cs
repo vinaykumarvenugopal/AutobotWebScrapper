@@ -109,7 +109,7 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models
         public float annualisedVolatility { get; set; }
         public float impliedVolatility { get; set; }
         public int clientWisePositionLimits { get; set; }
-        public int marketWidePositionLimits { get; set; }
+       
     }
 
     public class Bid
