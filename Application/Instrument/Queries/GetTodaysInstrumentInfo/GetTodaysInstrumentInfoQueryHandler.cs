@@ -54,7 +54,8 @@ namespace AutobotWebScrapper.Application.Instrument.Queries.GetTodaysInstrumentI
                     PercentPriceChange = instrumentDetail.PercentPriceChange,
                     VWAP = instrumentDetail.VWAP,
                     AnnualisedVolatility = instrumentDetail.AnnualisedVolatility,
-                    DailyVolatility = instrumentDetail.DailyVolatility
+                    DailyVolatility = instrumentDetail.DailyVolatility,
+                    LastTradedPrice = instrumentDetail.LastTradedPrice
                 };
 
             }

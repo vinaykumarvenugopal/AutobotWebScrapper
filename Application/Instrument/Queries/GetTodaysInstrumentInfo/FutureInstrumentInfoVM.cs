@@ -14,6 +14,8 @@ namespace AutobotWebScrapper.Application.Instrument.Queries.GetTodaysInstrumentI
         public double Low { get; set; }
         public double Close { get; set; }
         public double PreviousClose { get; set; }
+
+        public double LastTradedPrice { get; set; }
         public double PercentPriceChange { get; set; }
 
         public double PercentOIChange { get; set; }
