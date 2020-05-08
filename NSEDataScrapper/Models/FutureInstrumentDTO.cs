@@ -12,7 +12,6 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models
         public string fut_timestamp { get; set; }
         public string opt_timestamp { get; set; }
         public Stock[] stocks { get; set; }
-        public int[] strikePrices { get; set; }
         public string[] expiryDates { get; set; }
     }
 
@@ -46,7 +45,7 @@ namespace AutobotWebScrapper.Infrastructure.NSEDataScrapper.Models
         public string instrumentType { get; set; }
         public string expiryDate { get; set; }
         public string optionType { get; set; }
-        public int strikePrice { get; set; }
+
         public string identifier { get; set; }
         public float openPrice { get; set; }
         public float highPrice { get; set; }
